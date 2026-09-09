@@ -1,8 +1,8 @@
-![Test-Engim — Python file mutation exercise](assets/banner.svg)
+![Test-Engim — A Python exercise from an interview.](assets/banner-basic.svg)
 
-# A small exercise in changing text files
+# Test-Engim
 
-**Test-Engim** is a Python interview exercise that recursively visits a folder, removes randomly selected lines and replaces random characters in matching UTF-8 text files.
+A Python script I wrote for an interview test. It goes through a folder and its subfolders, randomly deletes lines and replaces characters in text files.
 
 **Python 3 · Standard library only · Interview exercise**
 
