@@ -1,21 +1,53 @@
-# Test-Engim
+![Test-Engim — Python file mutation exercise](assets/banner.svg)
 
-La logica dello script è la seguente
+# A small exercise in changing text files
 
-Viene usato os.walk per analizzare ogni file presente in una cartella, inclusi quelli nelle sottocartelle
+**Test-Engim** is a Python interview exercise that recursively visits a folder, removes randomly selected lines and replaces random characters in matching UTF-8 text files.
 
-se il file ha l'estensione specificata o non è stata specificata alcuna estensione viene letto e modificato
+**Python 3 · Standard library only · Interview exercise**
 
-la cancellazione di righe avviene in questo modo
+> This function overwrites files in place. Run it only against a disposable folder of copied test files. There is no backup, undo or dry-run mode.
 
-    -viene calcolato il numero di righe da rimuovere in base alla percentuale e con un minimo di 1, e assicurandosi che non si rimuovano più righe di quelle esistenti
+## How it works
 
-    -vengono poi selezionate in modo casuale le righe da rimuovere
+1. Walk the target folder and its subfolders with `os.walk`.
+2. Optionally filter files by extension.
+3. Read each matching file as UTF-8; skip empty or unreadable files.
+4. Remove a random selection of lines.
+5. Replace selected non-newline characters with letters, digits or punctuation.
+6. Write the result over the original file and print progress.
 
-la sostituzione casuale dei caratteri invece
+## Try it on disposable data
 
-    -per ogni riga rimanente, itera sui caratteri
+Clone the repository, then create a scratch directory and sample file from a Python shell:
 
-    -se il carattere è valido viene sostituito da un carattere casuale che può essere una lettera un numero o della punteggiatura
+```python
+from pathlib import Path
+from tempfile import mkdtemp
+from script import cancella_righe
 
-Infine viene sovrascritto il file originale e stampato un resoconto dei file ritoccati
+scratch = Path(mkdtemp(prefix="engim-demo-"))
+sample = scratch / "sample.txt"
+sample.write_text("First line\nSecond line\nThird line\n", encoding="utf-8")
+
+cancella_righe(
+    directory=str(scratch),
+    estensioni=[".txt"],
+    perc_lines=5,
+    perc_chars=5,
+)
+print(sample.read_text(encoding="utf-8"))
+```
+
+Running `python script.py` alone does not mutate files: the example calls in the source are commented out.
+
+## Parameters and edge cases
+
+| Parameter | Default | Meaning |
+| --- | --- | --- |
+| `directory` | Required | Folder to scan recursively |
+| `estensioni` | `None` | Extensions including the dot; `None` attempts every file |
+| `perc_lines` | `5` | Percentage used to calculate deleted lines |
+| `perc_chars` | `5` | Replacement probability for each remaining non-newline character |
+
+At least **one line is removed from every nonempty matching file**, even when `perc_lines=0`. A one-line file becomes empty. Percentages are not range-validated and results vary between runs. These details describe the current implementation.
